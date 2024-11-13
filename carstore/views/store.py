@@ -333,26 +333,38 @@ def userinfo():
     
     # 檢查資料是否存在並取出欄位，沒有資料則設為空字串
     user_data = {
-        'user_id': data[0][0] if data else '',
-        'user_name': data[0][1] if data else '',
-        'password': data[0][2] if data else '',
-        'identity': data[0][3] if data else '',
-        'license_number': data[0][4] if data else '',
-        'phone_number': data[0][5] if data else '',
-        'address': data[0][6] if data else ''
+        'user_id': data[0][0] if data[0][0] else '',
+        'user_name': data[0][1] if data[0][1] else '',
+        'password': data[0][2] if data[0][2] else '',
+        'identity': data[0][3] if data[0][3] else '',
+        'license_number': data[0][4] if data[0][4] else '',
+        'phone_number': data[0][5] if data[0][5] else '',
+        'address': data[0][6] if data[0][6] else ''
     }
 
-    # 如果是 POST 請求，更新資料庫
-    if request.method == 'POST':
-        # 將新的資料存入資料庫
-        Member.update_member(
-            {
-                'user_id' : request.form.get('user_id'),
-                'user_name' : request.form.get('user_name'),
-                'license_number' : request.form.get('license_number'),
-                'phone_number' : request.form.get('phone_number'),
-                'address' : request.form.get('address')
-            }
-        )     
+    if request.method == 'POST':  # 如果是 POST 請求
+        input_data = {
+            'user_id' : request.values.get('user_id'),
+            'user_name' : request.values.get('user_name'),
+            'license_number' : request.values.get('license_number'),
+            'phone_number' : request.values.get('phone_number'),
+            'address' : request.values.get('address')
+        }
+
+        # 檢查 uid 是否已經存在
+        exist_uid = Member.get_all_uid()
+        uid_list = []
+        for i in exist_uid: 
+            if i[0] != current_user.id: # 找到自己以外的uid
+                uid_list.append(i[0])
+
+        if (input_data['user_id'] in uid_list): 
+            flash("輸入身分證字號有重複")
+            return redirect(url_for('carstore.userinfo')) 
+        
+        # uid 不存在目前資料庫則可修改 uid
+        else: 
+            Member.update_member(input_data) # 將新的資料存入資料庫
+            return redirect(url_for('carstore.userinfo')) 
 
     return render_template('userinfo.html', **user_data)
