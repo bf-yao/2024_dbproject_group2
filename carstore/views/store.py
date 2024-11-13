@@ -13,11 +13,11 @@ import math
 from base64 import b64encode
 from api.sql import Member, Order_List, Product, Record, Cart
 
-store = Blueprint('bookstore', __name__, template_folder='../templates')
+store = Blueprint('carstore', __name__, template_folder='../templates')
 
 @store.route('/', methods=['GET', 'POST'])
 @login_required
-def bookstore():
+def carstore():
     result = Product.count()
     count = math.ceil(result[0]/9)
     flag = 0
@@ -59,7 +59,7 @@ def bookstore():
             
         count = math.ceil(total/9)
         
-        return render_template('bookstore.html', single=single, keyword=search, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+        return render_template('carstore.html', single=single, keyword=search, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
 
     
     elif 'pid' in request.args:
@@ -107,7 +107,7 @@ def bookstore():
         for j in range(start, end):
             final_data.append(book_data[j])
         
-        return render_template('bookstore.html', book_data=final_data, user=current_user.name, page=page, flag=flag, count=count)    
+        return render_template('carstore.html', book_data=final_data, user=current_user.name, page=page, flag=flag, count=count)    
     
     elif 'keyword' in request.args:
         single = 1
@@ -133,7 +133,7 @@ def bookstore():
         
         count = math.ceil(total/9)    
         
-        return render_template('bookstore.html', keyword=search, single=single, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+        return render_template('carstore.html', keyword=search, single=single, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
     
     else:
         book_row = Product.get_all_product()
@@ -148,7 +148,7 @@ def bookstore():
             if len(book_data) < 9:
                 book_data.append(book)
         
-        return render_template('bookstore.html', book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)
+        return render_template('carstore.html', book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)
 
 # 會員購物車
 @store.route('/cart', methods=['GET', 'POST'])
@@ -326,3 +326,33 @@ def only_cart():
         product_data.append(product)
 
     return product_data
+
+@store.route('/userinfo', methods=['GET', 'POST'])
+def userinfo():
+    data = Member.get_member(current_user.id)
+    
+    # 檢查資料是否存在並取出欄位，沒有資料則設為空字串
+    user_data = {
+        'user_id': data[0][0] if data else '',
+        'user_name': data[0][1] if data else '',
+        'password': data[0][2] if data else '',
+        'identity': data[0][3] if data else '',
+        'license_number': data[0][4] if data else '',
+        'phone_number': data[0][5] if data else '',
+        'address': data[0][6] if data else ''
+    }
+
+    # 如果是 POST 請求，更新資料庫
+    if request.method == 'POST':
+        # 將新的資料存入資料庫
+        Member.update_member(
+            {
+                'user_id' : request.form.get('user_id'),
+                'user_name' : request.form.get('user_name'),
+                'license_number' : request.form.get('license_number'),
+                'phone_number' : request.form.get('phone_number'),
+                'address' : request.form.get('address')
+            }
+        )     
+
+    return render_template('userinfo.html', **user_data)

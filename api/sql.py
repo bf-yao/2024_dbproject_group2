@@ -80,7 +80,7 @@ class DB:
 class Member:
     @staticmethod
     def get_member(user_id):
-        sql = "SELECT user_id, name, password, identity FROM member WHERE user_id = %s"
+        sql = "SELECT * FROM member WHERE user_id = %s"
         return DB.fetchall(sql, (user_id,))
     
     @staticmethod
@@ -92,8 +92,14 @@ class Member:
     def get_all_name(): # 取得所有會員的姓名
         sql = "SELECT name FROM member"
         return DB.fetchall(sql)
-
-   
+    
+    @staticmethod   
+    def update_member(input_data): # 修改會員資訊
+        # 更新會員資料表的 SQL 語句
+        sql = 'UPDATE member SET user_id = %s,name = %s, license_number = %s, phone_number = %s, address = %s WHERE user_id = %s'
+        # 呼叫 DB 執行 SQL 更新語句
+        DB.execute_input(sql, (input_data['user_id'],input_data['user_name'],input_data['license_number'],input_data['phone_number'],input_data['address'],input_data['user_id']))
+        
     @staticmethod
     def create_member(input_data):
         sql = 'INSERT INTO member (user_id, name, password, identity) VALUES (%s, %s, %s, %s)'

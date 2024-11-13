@@ -1,0 +1,53 @@
+{% extends "frontstage.html" %}
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}BookStore{% endblock title%}
+
+{% block content%}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">修改會員資料</h2>
+        <form>
+            <!-- 姓名 -->
+            <div class="mb-3">
+                <label for="user_name" class="form-label">姓名</label>
+                <input type="text" class="form-control" id="user_name" placeholder="請輸入姓名" required value="{{ user_name }}">
+            </div>
+
+            <!-- 身分證字號 -->
+            <div class="mb-3">
+                <label for="user_id" class="form-label">身分證字號</label>
+                <input type="text" class="form-control" id="user_id" placeholder="請輸入身分證字號" required value="{{ user_id }}">
+            </div>
+
+            <!-- 駕照號碼 -->
+            <div class="mb-3">
+                <label for="licenseNumber" class="form-label">駕照號碼</label>
+                <input type="text" class="form-control" id="licenseNumber" placeholder="請輸入駕照號碼" required value="{{ license_number }}">
+            </div>
+
+            <!-- 聯絡電話 -->
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">聯絡電話</label>
+                <input type="tel" class="form-control" id="phoneNumber" placeholder="請輸入聯絡電話" required value="{{ phone_number }}">
+            </div>
+            
+            <!-- 地址 -->
+             <div class="mb-3">
+                <label for="address" class="form-label">住家地址</label>
+                <input type="text" class="form-control" id="address" placeholder="請輸入住家地址" required value="{{ address }}">
+            </div>
+
+            <!-- 按鈕區塊 -->
+            <div class="text-center d-flex justify-content-center gap-2">
+                <button type="submit" class="btn btn-primary">提交</button>
+                <button type="reset" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content%}

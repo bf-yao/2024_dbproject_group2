@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from link import *
 from api.sql import *
 
+# api 所對應到的 html templates 資料夾
 api = Blueprint('api', __name__, template_folder='./templates')
 
 login_manager = LoginManager(api)
@@ -51,7 +52,7 @@ def login():
 
             if(DB_identity == identity):
                 if(identity == 'user'):
-                    return redirect(url_for('bookstore.bookstore'))
+                    return redirect(url_for('carstore.carstore'))
                 else:
                     return redirect(url_for('manager.productManager'))
             else:
