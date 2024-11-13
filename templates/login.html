@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}Login Page{% endblock title%}
+
+{% block content%}
+<div class="position-absolute top-50 start-50 translate-middle outer_div ">
+    <a href="{{ url_for('index') }}"><img class="icon" src="{{ url_for('static', filename='./img/home.png') }}"></a>
+    <h1 class="register_title mb-4 mt-4">會員登入</h1>
+    <div class="form_div">
+        <form  method='post' action={{ url_for('api.login') }} >
+            <p class="mb-4">
+                <label style="display: inline-block; width: 100px;">身分證字號 :</label>
+                <input type="text" name="user_id" minlength="10" maxlength="10" required/>
+            </p>
+            <p class="mb-4">
+                <label style="display: inline-block; width: 100px;">密碼：</label>
+                <input type="password" name="password" minlength="6" maxlength="12" required/>
+            </p>
+            
+            <div class="btn_div mb-4" style="margin-bottom: 1rem;">
+                <p class="option_div">選擇你要登入的身份：</p>
+                <select name="identity">
+                    <option value="user" selected>使用者</option>
+                    <option value="manager" >管理員</option>
+                </select>
+            </div>
+
+            <p class="mb-4">
+                <a href="{{ url_for('index') }}">
+                    <button type="button" class="register_btn">回上頁</button>
+                </a>
+                <button type="submit" class="register_btn">登入</button>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul>
+                            {% for category, message in messages %}
+                                <span>{{ message }}</span>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock content%}
