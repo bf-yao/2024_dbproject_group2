@@ -364,7 +364,12 @@ def userinfo():
         
         # uid 不存在目前資料庫則可修改 uid
         else: 
-            Member.update_member(input_data) # 將新的資料存入資料庫
+            try: # 將新的資料存入資料庫
+                Member.update_member(input_data)
+                flash("會員資料修改成功")
+            except Exception as e:
+                print(e)
+                flash("修改失敗，請重試")
             return redirect(url_for('carstore.userinfo')) 
 
     return render_template('userinfo.html', **user_data)

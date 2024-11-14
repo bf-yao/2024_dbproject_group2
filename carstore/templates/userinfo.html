@@ -10,6 +10,13 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100">
     <div class="container mt-5">
         <h2 class="mb-4 text-center">修改會員資料</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <span style="color: red;">{{ message }}</span>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
         <form  method='post' action={{ url_for('carstore.userinfo') }}>
             <!-- 姓名 -->
             <div class="mb-3">
@@ -22,13 +29,6 @@
                 <label for="user_id" class="form-label">身分證字號</label>
                 <input type="text" class="form-control" name="user_id" placeholder="請輸入身分證字號" value="{{ user_id }}"  minlength="10" maxlength="10" required>
             </div>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                        {% for category, message in messages %}
-                            <span style="color: red;">{{ message }}</span>
-                        {% endfor %}
-                {% endif %}
-            {% endwith %}
 
             <!-- 駕照號碼 -->
             <div class="mb-3">

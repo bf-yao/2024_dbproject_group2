@@ -6,11 +6,11 @@
 {% block title %}商品列表{% endblock title%}
 
 {% block content%}
-<br/>
+<br />
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-  
+
 <script language="javascript">
 
   alert('您沒有管理員的權限喔！');
@@ -21,42 +21,44 @@
 {% endwith %}
 
 <div class="book_table container-xxl">
-
+  <!-- 搜尋功能 -->
   <form class="d-flex col-sm-4" action="{{ url_for('carstore.carstore', keyword=1) }}">
     <div class="input-group">
-    <span class="input-group-text" id="basic-addon1">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-      </svg>
-    </span>
-    <input name='keyword' class="form-control me-2" type="search" placeholder="搜尋商品" aria-label="Search">
+      <span class="input-group-text" id="basic-addon1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+        </svg>
+      </span>
+      <input name='keyword' class="form-control me-2" type="search" placeholder="搜尋商品" aria-label="Search">
     </div>
-  </form><br/>
+  </form><br />
+
+  <!--  -->
   <form method="post" action={{ url_for('carstore.cart') }}>
-      
-      
-      {% for book in book_data %}
-      {% if loop.index % 3 == 1 %}
-      <div class="row">
+    {% for book in book_data %}
+    {% if loop.index % 3 == 1 %}
+    <div class="row">
       {% endif %}
-      
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{book.商品名稱}}</h5>
-              <p class="card-text">${{book.商品價格}}</p>
-              
-              <a href="{{ url_for('carstore.carstore', pid=book.商品編號) }}" class="btn btn-outline-primary">查看商品資訊</a>
-              <button class="btn btn-outline-success" type="submit" value="{{book.商品編號}}" name="pid" >加入購物車</button>
-            </div>
+
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{book.商品名稱}}</h5>
+            <p class="card-text">${{book.商品價格}}</p>
+
+            <a href="{{ url_for('carstore.carstore', pid=book.商品編號) }}" class="btn btn-outline-primary">查看商品資訊</a>
+            <button class="btn btn-outline-success" type="submit" value="{{book.商品編號}}" name="pid">加入購物車</button>
           </div>
         </div>
+      </div>
 
-        {% if loop.index % 3 == 0 %}
-        </div><br/>
-        {% endif %}
-            
-      {% endfor %}
+      {% if loop.index % 3 == 0 %}
+    </div><br />
+    {% endif %}
+
+    {% endfor %}
     </table>
   </form>
 
@@ -78,7 +80,8 @@
       {% endif %}
       {% for i in range(1, count+1) %}
       {% if single == 1 %}
-      <li class="page-item"><a class="page-link" href="{{ url_for('carstore.carstore', keyword=keyword, page=i) }}">{{i}}</a></li>
+      <li class="page-item"><a class="page-link"
+          href="{{ url_for('carstore.carstore', keyword=keyword, page=i) }}">{{i}}</a></li>
       {% else %}
       <li class="page-item"><a class="page-link" href="{{ url_for('carstore.carstore', page=i) }}">{{i}}</a></li>
       {% endif %}
