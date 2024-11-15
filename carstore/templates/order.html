@@ -3,7 +3,7 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}BookStore{% endblock title%}
+{% block title %}carstore{% endblock title%}
 
 {% block content%}
 <br/>
@@ -11,19 +11,19 @@
   <form method="post" action={{ url_for('carstore.cart') }}>
     <table class="table table-bordered">
       <tr>
-        <th><center>商品編號</center></th>
-        <th><center>商品名稱</center></th>
-        <th><center>商品價格</center></th>
-        <th><center>數量</center></th>
+        <th><center>車輛編號</center></th>
+        <th><center>車輛型號</center></th>
+        <th><center>租金</center></th>
+        <th><center>天數</center></th>
       </tr>
-      {% for book in data %}
+      {% for car in data %}
       <tr>
-        <td> <center>{{ book.商品編號 }}</center></td>
-        <td> <center>{{ book.商品名稱 }}</center></td>
-        <td> <center>{{ book.商品價格 }}</center></td>
+        <td> <center>{{ car.車輛編號 }}</center></td>
+        <td> <center>{{ car.車輛型號 }}</center></td>
+        <td> <center>{{ car.租金 }}</center></td>
         <td width="20%">
           <center>
-            {{ book.數量 }}
+            {{ car.天數 }}
           </center>
         </td>
       </tr>
@@ -49,7 +49,7 @@
     
     <center> 
       <div class="option">
-        <a href="{{ url_for('bookstore.cart') }}"><button class="btn btn-primary" type="submit" >回購物車</button></a>
+        <a href="{{ url_for('carstore.cart') }}"><button class="btn btn-primary" type="submit" >回購物車</button></a>
         <button class="btn btn-success" type="submit" value="order" name="order">下訂單</button>
     </div>
     </center>

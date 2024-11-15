@@ -36,48 +36,54 @@ def carstore():
         search = request.values.get('keyword')
         keyword = search
         
-        cursor.execute('SELECT * FROM PRODUCT WHERE PNAME LIKE %s', ('%' + search + '%',))
-        book_row = cursor.fetchall()
-        book_data = []
+        cursor.execute('SELECT * FROM PRODUCT WHERE model LIKE %s', ('%' + search + '%',))
+        car_row = cursor.fetchall()
+        car_data = []
         final_data = []
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in car_row:
+            car = {
+                '車輛編號': i[0],
+                '車輛品牌': i[1],
+                '車輛型號': i[2]
             }
-            book_data.append(book)
+            car_data.append(car)
             total = total + 1
         
-        if(len(book_data) < end):
-            end = len(book_data)
+        if(len(car_data) < end):
+            end = len(car_data)
             flag = 1
             
         for j in range(start, end):
-            final_data.append(book_data[j])
+            final_data.append(car_data[j])
             
         count = math.ceil(total/9)
         
-        return render_template('carstore.html', single=single, keyword=search, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+        return render_template('carstore.html', single=single, keyword=search, car_data=car_data, user=current_user.name, page=1, flag=flag, count=count)    
 
-    
+    #這裡是送進product.html
     elif 'pid' in request.args:
         pid = request.args['pid']
         data = Product.get_product(pid)
         
-        pname = data[1]
-        price = data[2]
-        category = data[3]
-        description = data[4]
+        brand = data[1]
+        model = data[2]
+        year = data[3]
+        mileage = data[4]
+        color = data[5]
+        price = data[6]
+        status = data[7]
         image = 'sdg.jpg'
         
         product = {
-            '商品編號': pid,
-            '商品名稱': pname,
-            '單價': price,
-            '類別': category,
-            '商品敘述': description,
+            '車輛編號': pid,
+            '車輛品牌': brand,
+            '車輛型號': model,
+            '年分': year,
+            '里程': mileage,
+            '顏色': color,
+            '租金': price,
+            '車輛狀態': status,
             '商品圖片': image
         }
 
@@ -88,67 +94,67 @@ def carstore():
         start = (page - 1) * 9
         end = page * 9
         
-        book_row = Product.get_all_product()
-        book_data = []
+        car_row = Product.get_all_product()
+        car_data = []
         final_data = []
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in car_row:
+            car = {
+                '車輛編號': i[0],
+                '車輛品牌': i[1],
+                '車輛型號': i[2]
             }
-            book_data.append(book)
+            car_data.append(car)
             
-        if(len(book_data) < end):
-            end = len(book_data)
+        if(len(car_data) < end):
+            end = len(car_data)
             flag = 1
             
         for j in range(start, end):
-            final_data.append(book_data[j])
+            final_data.append(car_data[j])
         
-        return render_template('carstore.html', book_data=final_data, user=current_user.name, page=page, flag=flag, count=count)    
+        return render_template('carstore.html', car_data=final_data, user=current_user.name, page=page, flag=flag, count=count)    
     
     elif 'keyword' in request.args:
         single = 1
         search = request.values.get('keyword')
         keyword = search
-        cursor.execute('SELECT * FROM PRODUCT WHERE PNAME LIKE %s', ('%' + search + '%',))
-        book_row = cursor.fetchall()
-        book_data = []
+        cursor.execute('SELECT * FROM PRODUCT WHERE model LIKE %s', ('%' + search + '%',))
+        car_row = cursor.fetchall()
+        car_data = []
         total = 0
         
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2]
+        for i in car_row:
+            car = {
+                '車輛編號': i[0],
+                '車輛品牌': i[1],
+                '車輛型號': i[2]
             }
 
-            book_data.append(book)
+            car_data.append(car)
             total = total + 1
             
-        if(len(book_data) < 9):
+        if(len(car_data) < 9):
             flag = 1
         
         count = math.ceil(total/9)    
         
-        return render_template('carstore.html', keyword=search, single=single, book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)    
+        return render_template('carstore.html', keyword=search, single=single, car_data=car_data, user=current_user.name, page=1, flag=flag, count=count)    
     
     else:
-        book_row = Product.get_all_product()
-        book_data = []
+        car_row = Product.get_all_product()
+        car_data = []
         temp = 0
-        for i in book_row:
-            book = {
-                '商品編號': i[0],
-                '商品名稱': i[1],
-                '商品價格': i[2],
+        for i in car_row:
+            car = {
+                '車輛編號': i[0],
+                '車輛品牌': i[1],
+                '車輛型號': i[2],
             }
-            if len(book_data) < 9:
-                book_data.append(book)
+            if len(car_data) < 9:
+                car_data.append(car)
         
-        return render_template('carstore.html', book_data=book_data, user=current_user.name, page=1, flag=flag, count=count)
+        return render_template('carstore.html', car_data=car_data, user=current_user.name, page=1, flag=flag, count=count)
 
 # 會員購物車
 @store.route('/cart', methods=['GET', 'POST'])
@@ -170,16 +176,16 @@ def cart():
                 Cart.add_cart(current_user.id, time)  # 幫他加一台購物車
                 data = Cart.get_cart(current_user.id)
 
-            tno = data[2]  # 取得交易編號
+            tno = data[1]  # 取得交易編號
             pid = request.form.get('pid')  # 使用者想要購買的東西，使用 `request.form.get()` 來避免 KeyError
             if not pid:
                 flash('Product ID is missing.')
-                return redirect(url_for('bookstore.cart'))  # 返回購物車頁面並顯示錯誤信息
+                return redirect(url_for('carstore.cart'))  # 返回購物車頁面並顯示錯誤信息
 
             # 檢查購物車裡面有沒有商品
             product = Record.check_product(pid, tno)
             # 取得商品價錢
-            price = Product.get_product(pid)[2]
+            price = Product.get_product(pid)[6]
 
             # 如果購物車裡面沒有的話，把它加一個進去
             if product is None:
@@ -192,21 +198,21 @@ def cart():
 
         elif "delete" in request.form:
             pid = request.form.get('delete')
-            tno = Cart.get_cart(current_user.id)[2]
+            tno = Cart.get_cart(current_user.id)[1]
 
             Member.delete_product(tno, pid)
             product_data = only_cart()
-
+        #點擊繼續購物
         elif "user_edit" in request.form:
             change_order()
-            return redirect(url_for('bookstore.bookstore'))
-
+            return redirect(url_for('carstore.carstore'))
+        #點擊直接結帳
         elif "buy" in request.form:
             change_order()
-            return redirect(url_for('bookstore.order'))
-
+            return redirect(url_for('carstore.order'))
+        #點擊下訂單
         elif "order" in request.form:
-            tno = Cart.get_cart(current_user.id)[2]
+            tno = Cart.get_cart(current_user.id)[1]
             total = Record.get_total_money(tno)
             Cart.clear_cart(current_user.id)
 
@@ -217,28 +223,27 @@ def cart():
             return render_template('complete.html', user=current_user.name)
 
     product_data = only_cart()
-
     if product_data == 0:
         return render_template('empty.html', user=current_user.name)
     else:
         return render_template('cart.html', data=product_data, user=current_user.name)
 
-
+#點擊直接結帳後將購物車內商品送入order頁面
 @store.route('/order')
 def order():
     data = Cart.get_cart(current_user.id)
-    tno = data[2]
+    tno = data[1]
 
     product_row = Record.get_record(tno)
     product_data = []
 
     for i in product_row:
-        pname = Product.get_name(i[1])
+        model = Product.get_name(i[1])
         product = {
-            '商品編號': i[1],
-            '商品名稱': pname,
-            '商品價格': i[3],
-            '數量': i[2]
+            '車輛編號': i[1],
+            '車輛型號': model,
+            '租金': i[3],
+            '天數': i[2]
         }
         product_data.append(product)
     
@@ -271,9 +276,9 @@ def orderlist():
     for j in orderdetail_row:
         temp = {
             '訂單編號': j[0],
-            '商品名稱': j[1],
-            '商品單價': j[2],
-            '訂購數量': j[3]
+            '車輛型態': j[1],
+            '租金': j[2],
+            '天數': j[3]
         }
         orderdetail.append(temp)
 
@@ -282,12 +287,12 @@ def orderlist():
 
 def change_order():
     data = Cart.get_cart(current_user.id)
-    tno = data[2] # 使用者有購物車了，購物車的交易編號是什麼
-    product_row = Record.get_record(data[2])
+    tno = data[1] # 使用者有購物車了，購物車的交易編號是什麼
+    product_row = Record.get_record(data[1])
 
     for i in product_row:
         
-        # i[0]：交易編號 / i[1]：商品編號 / i[2]：數量 / i[3]：價格
+        # i[0]：交易編號 / i[1]：商品編號 / i[2]：天數 / i[3]：租金
         if int(request.form[i[1]]) != i[2]:
             Record.update_product({
                 'amount':request.form[i[1]],
@@ -299,7 +304,7 @@ def change_order():
 
     return 0
 
-
+#用來將該會員購物車內的商品(record)送入購物車頁面
 def only_cart():
     count = Cart.check(current_user.id)
 
@@ -307,21 +312,21 @@ def only_cart():
         return 0
 
     data = Cart.get_cart(current_user.id)
-    tno = data[2]
+    tno = data[1]
     product_row = Record.get_record(tno)
     product_data = []
 
     for i in product_row:
         pid = i[1]
-        pname = Product.get_name(i[1])
+        model = Product.get_name(i[1])
         price = i[3]
         amount = i[2]
 
         product = {
-            '商品編號': pid,
-            '商品名稱': pname,
-            '商品價格': price,
-            '數量': amount
+            '車輛編號': pid,
+            '車輛型號': model,
+            '租金': price,
+            '天數': amount
         }
         product_data.append(product)
 

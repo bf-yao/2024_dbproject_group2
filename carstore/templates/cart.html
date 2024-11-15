@@ -20,29 +20,29 @@
 <br/>
 <div class="container-xl">
   <br/>
-  <form method="post" action={{ url_for('bookstore.cart') }}>
+  <form method="post" action={{ url_for('carstore.cart') }}>
     <table class="table table-bordered">
       <tr>
-        <th><center>商品編號</center></th>
-        <th><center>商品名稱</center></th>
-        <th><center>商品價格</center></th>
-        <th><center>數量</center></th>
-        <th><center>商品操作</center></th>
+        <th><center>車輛編號</center></th>
+        <th><center>車輛型號</center></th>
+        <th><center>租金</center></th>
+        <th><center>天數</center></th>
+        <th><center>租用操作</center></th>
       </tr>
-      {% for book in data %}
+      {% for car in data %}
       <tr>
-        <td> <center>{{ book.商品編號 }}</center></td>
-        <td> <center>{{ book.商品名稱 }}</center></td>
-        <td> <center>{{ book.商品價格 }}</center></td>
+        <td> <center>{{ car.車輛編號 }}</center></td>
+        <td> <center>{{ car.車輛型號 }}</center></td>
+        <td> <center>{{ car.租金 }}</center></td>
         <td width="20%">
           <center>
-            <input class="form-control" type="number" onkeyup="value=value.replace(/[^\d]/g,'')" min="1" value="{{ book.數量 }}" name="{{ book.商品編號 }}">
+            <input class="form-control" type="number" onkeyup="value=value.replace(/[^\d]/g,'')" min="1" value="{{ car.天數 }}" name="{{ car.車輛編號 }}">
 
           </center>
         </td>
         <td>
           <center>
-            <button class="btn btn-danger" type="submit" value="{{book.商品編號}}" name="delete" onclick="return (confirm('你確定要刪除 \'{{ book.商品名稱 }}\' 嗎？'))">
+            <button class="btn btn-danger" type="submit" value="{{car.車輛編號}}" name="delete" onclick="return (confirm('你確定要刪除 \'{{ car.車輛型號 }}\' 嗎？'))">
               刪除
             </button>
           </center>

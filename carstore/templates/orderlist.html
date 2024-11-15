@@ -3,7 +3,7 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}BookStore{% endblock title%}
+{% block title %}carstore{% endblock title%}
 
 {% block content %}
 <!-- <form method="post" action="#"> -->
@@ -27,9 +27,9 @@
                       {% for j in detail %}
                       {% if j.訂單編號 == i.訂單編號 %}
                       <tr>
-                        <td> <center>{{ j.商品名稱 }}</center></td>
-                        <td> <center>{{ j.商品單價 }}</center></td>
-                        <td> <center>{{ j.訂購數量 }}</center></td>
+                        <td> <center>{{ j.車輛型態 }}</center></td>
+                        <td> <center>{{ j.租金 }}</center></td>
+                        <td> <center>{{ j.天數 }}</center></td>
                       </tr>
                       {% endif %}
                       {% endfor %}
@@ -49,7 +49,7 @@
 
 <br/>
 <div class="container-xl">
-  <form method="post" action={{ url_for('bookstore.orderlist') }}>
+  <form method="post" action={{ url_for('carstore.orderlist') }}>
     <table class="table table-bordered">
       <tr>
         <th><center>訂單編號</center></th>

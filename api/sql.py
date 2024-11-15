@@ -125,7 +125,7 @@ class Cart:
     @staticmethod
     def check(user_id):
         sql = '''SELECT * FROM cart, record 
-                 WHERE cart.mid = %s::bigint 
+                 WHERE cart.mid = %s
                  AND cart.tno = record.tno::bigint'''
         return DB.fetchone(sql, (user_id,))
 
@@ -163,7 +163,7 @@ class Product:
 
     @staticmethod
     def get_name(pid):
-        sql = 'SELECT pname FROM product WHERE pid = %s'
+        sql = 'SELECT model FROM product WHERE pid = %s'
         return DB.fetchone(sql, (pid,))[0]
 
     @staticmethod
@@ -195,7 +195,7 @@ class Record:
 
     @staticmethod
     def get_price(pid):
-        sql = 'SELECT price FROM product WHERE pid = %s'
+        sql = 'SELECT saleprice FROM product WHERE pid = %s'
         return DB.fetchone(sql, (pid,))[0]
 
     @staticmethod
@@ -248,7 +248,7 @@ class Order_List:
     @staticmethod
     def get_orderdetail():
         sql = '''
-        SELECT o.oid, p.pname, r.saleprice, r.amount
+        SELECT o.oid, p.model, r.saleprice, r.amount
         FROM order_list o
         JOIN record r ON o.tno = r.tno -- 確保兩者都是 bigint 類型
         JOIN product p ON r.pid = p.pid
