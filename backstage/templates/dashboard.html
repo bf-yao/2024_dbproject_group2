@@ -11,7 +11,7 @@
     <nav>
       <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">訂單數量分析</button>
-        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">書本銷量分類</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">車輛出租量分類</button>
         <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">消費總額排名</button>        
       </div>      
     </nav>
@@ -46,24 +46,56 @@
     title: {
       text: '各月訂單數量分析'
     },
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis',
+        axisPointer: {
+            type: 'shadow' // 坐标轴指示器，默认为直线，可选 'line' | 'shadow'
+        }
+    },
     legend: {
-      data: ['訂單數量']
+      data: ['訂單總額', '訂單數量'], // 图例显示两条系列
+        show: true
     },
     xAxis: {
       data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     },
-    yAxis: {},
+    yAxis: {
+      type: 'value',
+        name: '金額/數量', // y轴名称
+        axisLabel: {
+            formatter: '{value}'
+        }
+    },
     series: [{
-      name: '銷售總額',
+      name: '出租總額',
       type: 'bar',
       // symbol: 'circle',
       symbolSize: 16,
       data: data,
       markPoint: {
         data: [
-          {type: 'max', name: '銷量最高月份'},
-          {type: 'min', name: '銷量最低月份'}
+          {type: 'max', name: '出租總額最高月份'},
+          {type: 'min', name: '出租總額最低月份'}
+        ]
+      },
+      label: {
+        show: true,
+        position: 'top',
+        textStyle: {
+          fontSize: 15
+        }
+      }
+    },
+    {
+      name: '訂單數量',
+      type: 'bar',
+      // symbol: 'circle',
+      symbolSize: 16,
+      data: count,
+      markPoint: {
+        data: [
+          {type: 'max', name: '訂單最多月份'},
+          {type: 'min', name: '訂單最少月份'}
         ]
       },
       label: {
@@ -81,23 +113,29 @@
   };
 
   // 以圓餅圖分析書本銷量
+  var data = {{datab|tojson}};
+  var legendData = data.map(item => item.name);
   var chartDomb = document.getElementById('mainb');
   var myChartb = echarts.init(chartDomb);
-  var data = {{datab|tojson}};
+ 
   var optionb = {
     title: {
-      text: '各類商品銷量分析',
+      text: '各廠牌出租量分析',
       left: 'center',
       top: 'center'
     },
-    tooltip: {},
+    tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c} ({d}%)'
+    },
     legend: {
       orient: 'vertical',
       x: 'left',
-      data: ['BOOK', 'CD', 'DVD']
+      data: legendData
     },
     series: [
       {
+        name: '品牌',
         type: 'pie',
         data: data,          
         radius: ['40%', '70%']

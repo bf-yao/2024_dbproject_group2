@@ -36,68 +36,78 @@ def productManager():
         if(data != None):
             flash('failed')
         else:
-            data = Product.get_product(pid)
+            #data = Product.get_product(pid)
             Product.delete_product(pid)
     
     elif 'edit' in request.values:
         pid = request.values.get('edit')
         return redirect(url_for('manager.edit', pid=pid))
     
-    book_data = book()
-    return render_template('productManager.html', book_data = book_data, user=current_user.name)
+    car_data = car()
+    return render_template('productManager.html', car_data = car_data, user=current_user.name)
 
-def book():
-    book_row = Product.get_all_product()
-    book_data = []
-    for i in book_row:
-        book = {
-            '商品編號': i[0],
-            '商品名稱': i[1],
-            '商品售價': i[2],
-            '商品類別': i[3]
+def car():
+    car_row = Product.get_all_product()
+    car_data = []
+    for i in car_row:
+        car = {
+            '車輛編號': i[0],
+            '車輛品牌': i[1],
+            '車輛型號': i[2],
+            '出廠年份': i[3],
+            '總里程': i[4],
+            '車輛顏色': i[5],
+            '價格': i[6]
         }
-        book_data.append(book)
-    return book_data
+        car_data.append(car)
+    return car_data
 
 @manager.route('/add', methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
-        data = ""
-        while(data != None):
-            number = str(random.randrange( 10000, 99999))
-            en = random.choice(string.ascii_letters)
-            pid = en + number
-            data = Product.get_product(pid)
+        if (request.values.get('submit')=='true'):
+            data = ""
+            #pid = "0"
+            while(data != None):
+                number = str(random.randrange( 1000, 10000))
+                en = random.choice(string.ascii_letters) + random.choice(string.ascii_letters) + random.choice(string.ascii_letters)
+                pid = en.upper() + '-' + number
+                data = Product.get_product(pid)
 
-        pname = request.values.get('pname')
-        price = request.values.get('price')
-        category = request.values.get('category')
-        pdesc = request.values.get('description')
+            brand = request.values.get('brand')
+            model = request.values.get('model')
+            year = request.values.get('year')
+            mileage = request.values.get('mileage')
+            color = request.values.get('color')
+            price = request.values.get('price')
+            status = request.values.get('status')
 
-        # 檢查是否正確獲取到所有欄位的數據
-        if pname is None or price is None or category is None or pdesc is None:
-            flash('所有欄位都是必填的，請確認輸入內容。')
+            # 檢查是否正確獲取到所有欄位的數據
+            if brand is None or price is None or model is None or year is None or mileage is None or color is None or status is None:
+                flash('所有欄位都是必填的，請確認輸入內容。')
+                return redirect(url_for('manager.productManager'))
+
+            # 檢查欄位的長度
+            if len(brand) < 1 or len(price) < 1:
+                flash('商品名稱或價格不可為空。')
+                return redirect(url_for('manager.productManager'))
+
+            # if (len(pname) < 1 or len(price) < 1):
+            #     return redirect(url_for('manager.productManager'))
+            
+            Product.add_product(
+                {
+                'pid' : pid,
+                'brand' : brand,
+                'model' : model,
+                'year' : year,
+                'mileage' : mileage,
+                'color' : color,
+                'price' : price,
+                'status':status
+                }
+            )
             return redirect(url_for('manager.productManager'))
-
-        # 檢查欄位的長度
-        if len(pname) < 1 or len(price) < 1:
-            flash('商品名稱或價格不可為空。')
-            return redirect(url_for('manager.productManager'))
-
-
-        if (len(pname) < 1 or len(price) < 1):
-            return redirect(url_for('manager.productManager'))
-        
-        Product.add_product(
-            {'pid' : pid,
-             'pname' : pname,
-             'price' : price,
-             'category' : category,
-             'pdesc':pdesc
-            }
-        )
-
-        return redirect(url_for('manager.productManager'))
 
     return render_template('productManager.html')
 
@@ -110,15 +120,19 @@ def edit():
             return redirect(url_for('bookstore'))
 
     if request.method == 'POST':
-        Product.update_product(
-            {
-            'pname' : request.values.get('pname'),
-            'price' : request.values.get('price'),
-            'category' : request.values.get('category'), 
-            'pdesc' : request.values.get('description'),
-            'pid' : request.values.get('pid')
-            }
-        )
+        if(request.values.get('submit')=='true'):
+            Product.update_product(
+                {
+                'brand' : request.values.get('brand'),
+                'model' : request.values.get('model'),
+                'year' : request.values.get('year'), 
+                'mileage' : request.values.get('mileage'),
+                'color' : request.values.get('color'),
+                'price' : request.values.get('price'),
+                'status' : request.values.get('status'),
+                'pid' : request.values.get('pid')
+                }
+            )       
         
         return redirect(url_for('manager.productManager'))
 
@@ -130,17 +144,23 @@ def edit():
 def show_info():
     pid = request.args['pid']
     data = Product.get_product(pid)
-    pname = data[1]
-    price = data[2]
-    category = data[3]
-    description = data[4]
+    brand = data[1]
+    model = data[2]
+    year = data[3]
+    mileage = data[4]
+    color = data[5]
+    price = data[6]
+    status = data[7]
 
     product = {
-        '商品編號': pid,
-        '商品名稱': pname,
-        '單價': price,
-        '類別': category,
-        '商品敘述': description
+        '車輛編號': pid,
+        '車輛品牌': brand,
+        '車輛型號': model,
+        '出廠年份': year,
+        '總里程': mileage,
+        '車輛顏色': color,
+        '價格': price,
+        '商品敘述': status
     }
     return product
 
@@ -168,9 +188,9 @@ def orderManager():
         for j in orderdetail_row:
             orderdetail = {
                 '訂單編號': j[0],
-                '商品名稱': j[1],
-                '商品單價': j[2],
-                '訂購數量': j[3]
+                '車輛型號': j[1],
+                '車輛價格': j[2],
+                '租用時數': j[3]
             }
             order_detail.append(orderdetail)
 

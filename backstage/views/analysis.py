@@ -27,7 +27,7 @@ def dashboard():
             for k in row:
                 dataa.append(k[1])
         
-    row = Analysis.category_sale()
+    row = Analysis.brand_sale()
     datab = []
     for i in row:
         temp = {

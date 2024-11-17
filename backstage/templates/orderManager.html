@@ -32,17 +32,17 @@
                 <div class="mb-3">
                     <table class="table table-bordered">
                         <tr>
-                            <th><center>商品名稱</center></th>
-                            <th><center>商品單價</center></th>
-                            <th><center>訂購數量</center></th>
+                            <th><center>車輛型號</center></th>
+                            <th><center>車輛價格(小時)</center></th>
+                            <th><center>租用時數</center></th>
                         </tr>
                             
                         {% for j in orderDetail %}
                         {% if j.訂單編號 == i.訂單編號 %}
                         <tr>
-                            <td> <center>{{ j.商品名稱 }}</center></td>
-                            <td> <center>{{ j.商品單價 }}</center></td>
-                            <td> <center>{{ j.訂購數量 }}</center></td>
+                            <td> <center>{{ j.車輛型號 }}</center></td>
+                            <td> <center>{{ j.車輛價格 }}</center></td>
+                            <td> <center>{{ j.租用時數 }}</center></td>
                         </tr>
                         {% endif %}
                         {% endfor %}
