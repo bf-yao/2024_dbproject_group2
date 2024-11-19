@@ -112,7 +112,7 @@ class Member:
 
     @staticmethod
     def get_order(userid):
-        sql = 'SELECT * FROM order_list WHERE mid = %s ORDER BY ordertime DESC'
+        sql = 'SELECT * FROM order_list WHERE mid = %s ORDER BY startdate DESC'
         return DB.fetchall(sql, (userid,))
 
     @staticmethod

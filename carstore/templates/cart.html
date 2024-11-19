@@ -3,7 +3,7 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}購物車清單{% endblock title%}
+{% block title %}目前訂車資料{% endblock title%}
 
 {% block content %}
 
@@ -26,7 +26,8 @@
         <th><center>車輛編號</center></th>
         <th><center>車輛型號</center></th>
         <th><center>租金</center></th>
-        <th><center>天數</center></th>
+        <th><center>取車時間</center></th>
+        <th><center>還車時間</center></th>
         <th><center>租用操作</center></th>
       </tr>
       {% for car in data %}
@@ -36,8 +37,16 @@
         <td> <center>{{ car.租金 }}</center></td>
         <td width="20%">
           <center>
-            <input class="form-control" type="number" onkeyup="value=value.replace(/[^\d]/g,'')" min="1" value="{{ car.天數 }}" name="{{ car.車輛編號 }}">
-
+            <!-- 開始日期與時間選擇器 -->
+            <input class="form-control" type="datetime-local" id="{{ car.車輛編號 }}_start" name="{{ car.車輛編號 }}_start"
+                   min="{{ today_date }}" onchange="validateDate('{{ car.車輛編號 }}')">
+          </center>
+        </td>
+        <td width="20%">
+          <center>
+            <!-- 結束日期與時間選擇器 -->
+            <input class="form-control" type="datetime-local" id="{{ car.車輛編號 }}_end" name="{{ car.車輛編號 }}_end"
+                   min="{{ today_date }}" onchange="validateDate('{{ car.車輛編號 }}')">
           </center>
         </td>
         <td>
@@ -46,13 +55,13 @@
               刪除
             </button>
           </center>
-      </td>
+        </td>
       </tr>
-      {% endfor %}
+      {% endfor %}  
     </table>
     <center>
       <div class="option">
-        <button class="btn btn-primary" type="submit" value="edit" name="user_edit" >繼續購物</button>
+        <button class="btn btn-primary" type="submit" value="edit" name="user_edit" >繼續選車</button>
         <button class="btn btn-success" type="submit" value="edit" name="buy" >直接結帳</button>
       </div>
     </center>
@@ -61,5 +70,26 @@
   </form>
 
 </div>
+
+<script>
+  function validateDate(carId) {
+    const startInput = document.getElementById(carId + '_start');
+    const endInput = document.getElementById(carId + '_end');
+
+    // 如果結束時間小於開始時間，則提示錯誤並清空結束時間
+    if (endInput.value && startInput.value && (endInput.value < startInput.value)) {
+      alert('結束時間不能小於開始時間');
+      endInput.value = '';
+    }
+  }
+
+  // 設定當前日期和時間的最小值，並將時區設為台灣 (UTC+8)
+  document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+    const now = new Date();
+    // 以台灣時區計算
+    now.setHours(now.getHours() - now.getTimezoneOffset() / 60);
+    input.min = now.toISOString().slice(0, 16);
+  }); 
+</script>
 
 {% endblock content%}
