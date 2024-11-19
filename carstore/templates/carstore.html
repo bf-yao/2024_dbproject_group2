@@ -22,6 +22,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class="car_table container-xxl">
 
   <form class="d-flex col-sm-4" action="{{ url_for('carstore.carstore', keyword=1) }}">
@@ -96,6 +97,29 @@
     <div class="row">
       {% endif %}
 >>>>>>> 8dc5dd2 (會員資訊功能修改)
+=======
+<div class="book_table container-xxl">
+  <!-- 搜尋功能 -->
+  <form class="d-flex col-sm-4" action="{{ url_for('carstore.carstore', keyword=1) }}">
+    <div class="input-group">
+      <span class="input-group-text" id="basic-addon1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+        </svg>
+      </span>
+      <input name='keyword' class="form-control me-2" type="search" placeholder="搜尋商品" aria-label="Search">
+    </div>
+  </form><br />
+
+  <!--  -->
+  <form method="post" action={{ url_for('carstore.cart') }}>
+    {% for book in book_data %}
+    {% if loop.index % 3 == 1 %}
+    <div class="row">
+      {% endif %}
+>>>>>>> 8dc5dd2 (會員資訊功能修改)
 
       <div class="col-sm-4">
         <div class="card">
@@ -106,6 +130,9 @@
             <a href="{{ url_for('carstore.carstore', pid=book.商品編號) }}" class="btn btn-outline-primary">查看商品資訊</a>
             <button class="btn btn-outline-success" type="submit" value="{{book.商品編號}}" name="pid">加入購物車</button>
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 8dc5dd2 (會員資訊功能修改)
+=======
 >>>>>>> 8dc5dd2 (會員資訊功能修改)
 =======
 >>>>>>> 8dc5dd2 (會員資訊功能修改)
