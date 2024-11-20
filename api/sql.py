@@ -87,6 +87,16 @@ class Member:
     def get_all_uid(): # 取得所有會員的身分證字號
         sql = "SELECT user_id FROM member"
         return DB.fetchall(sql)
+    
+    @staticmethod
+    def get_all_lid(): # 取得所有會員的駕照號碼
+        sql = "SELECT license_number FROM member"
+        return DB.fetchall(sql)
+    
+    @staticmethod
+    def find_lid(uid): # 找自己的駕照號碼
+        sql = "SELECT license_number FROM member WHERE user_id = %s"
+        return DB.fetchone(sql, (uid,))
 
     @staticmethod
     def get_all_name(): # 取得所有會員的姓名
@@ -193,9 +203,9 @@ class Record:
         return DB.fetchone(sql, (tno,))[0]
 
     @staticmethod
-    def check_product(pid, tno):
-        sql = 'SELECT * FROM record WHERE pid = %s and tno = %s'
-        return DB.fetchone(sql, (pid, tno))
+    def check_product(tno):
+        sql = 'SELECT * FROM record WHERE tno = %s'
+        return DB.fetchone(sql, (tno,))
 
     @staticmethod
     def get_price(pid):
@@ -221,6 +231,11 @@ class Record:
     def update_product(input_data):
         sql = 'UPDATE record SET amount = %s, total = %s, startdate=%s, enddate=%s WHERE pid = %s and tno = %s'
         DB.execute_input(sql, (input_data['amount'], input_data['total'], input_data['startdate'], input_data['enddate'], input_data['pid'], input_data['tno']))
+
+    @staticmethod
+    def delete_product(tno):
+        sql = "DELETE FROM record WHERE tno = %s"
+        DB.execute_input(sql, (tno,))
 
     @staticmethod
     def delete_check(pid):

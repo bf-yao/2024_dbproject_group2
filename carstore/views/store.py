@@ -184,7 +184,7 @@ def cart():
                 return redirect(url_for('carstore.cart'))  # 返回購物車頁面並顯示錯誤信息
 
             # 檢查購物車裡面有沒有商品
-            product = Record.check_product(pid, tno)
+            product = Record.check_product(tno)
             # 取得商品價錢
             price = Product.get_product(pid)[6]
 
@@ -195,21 +195,14 @@ def cart():
                 Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price, 'startdate':start_date, 'enddate':end_date})
             else:
                 # 若購物車內已經有商品
-                pass
-                # existing_order = Record.get_record(tno)  # 假設這個方法可以取得購物車內現有訂單
-                # existing_pid = existing_order[0][0] # pid
-                # print(existing_order[0][0])
-
-                # # 提示用戶是否覆蓋現有訂單
-                # confirm_override = input(f"購物車內已有訂單 (車輛編號: {existing_pid})，是否覆蓋原訂單？(y/n): ").strip().lower()
-
-                # if confirm_override == 'y':  # 用戶選擇覆蓋
-                #     start_date = request.form.get(f"{pid}_start")
-                #     end_date = request.form.get(f"{pid}_end")
-                #     Record.update_product({'pid': pid, 'tno': tno, 'amount': 0, 'total': price, 'startdate': start_date, 'enddate': end_date})
-                #     print("已覆蓋原有訂單。")
-                # else:  # 用戶選擇不覆蓋
-                #     pass
+                # existing_order = Record.get_record(tno)  
+                # existing_pid = existing_order[0][1] # pid(已存在車輛編號)
+                start_date = request.form.get(f"{pid}_start")
+                end_date = request.form.get(f"{pid}_end")
+                Record.delete_product(tno)
+                Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price, 'startdate':start_date, 'enddate':end_date})
+                # Record.update_product({'pid': pid, 'tno': tno, 'amount': 0, 'total': price, 'startdate': start_date, 'enddate': end_date})
+                print("已覆蓋原有訂單。")
 
         elif "delete" in request.form:
             pid = request.form.get('delete')
@@ -407,17 +400,31 @@ def license():
                 'address' : request.values.get('address')
             }
 
-            # 判斷字典中的每個值是否都不為空
-            if all(value for value in input_data.values()):
-                # 如果所有值都不為空，將會員駕照資料存入資料庫
-                try: 
-                    Member.update_member(input_data)
-                except Exception as e:
-                    print(e)
+            # 檢查 "駕照號碼" 是否已經存在
+            exist_lid = Member.get_all_lid()
+            find_lid = Member.find_lid(current_user.id) # 找到自己的lid
+
+            lid_list = []
+            for i in exist_lid: 
+                if i[0] != find_lid[0]: 
+                    lid_list.append(i[0])
+
+            if (input_data['license_number'] in lid_list): 
+                flash("輸入駕照號碼有重複")
+                return redirect(url_for('carstore.license')) 
+
             else:
-                # 如果有任何值為空，執行錯誤處理或顯示提示
-                flash("資料有缺失，請補充所有欄位。")
-                return redirect(url_for('carstore.license'))
+                # 判斷字典中的每個值是否都不為空
+                if all(value for value in input_data.values()):
+                    # 如果所有值都不為空，將會員駕照資料存入資料庫
+                    try: 
+                        Member.update_member(input_data)
+                    except Exception as e:
+                        print(e)
+                else:
+                    # 如果有任何值為空，執行錯誤處理或顯示提示
+                    flash("資料有缺失，請補充所有欄位。")
+                    return redirect(url_for('carstore.license'))
 
         return redirect(url_for('carstore.order'))
     
