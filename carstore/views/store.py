@@ -12,6 +12,7 @@ from link import *
 import math
 from base64 import b64encode
 from api.sql import Member, Order_List, Product, Record, Cart
+from datetime import datetime
 
 store = Blueprint('carstore', __name__, template_folder='../templates')
 
@@ -189,26 +190,42 @@ def cart():
 
             # 如果購物車裡面沒有的話，把它加一個進去
             if product is None:
-                Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price})
+                start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
+                end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
+                Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price, 'startdate':start_date, 'enddate':end_date})
             else:
-                # 如果購物車裡面有的話，就多加一個進去
-                amount = Record.get_amount(tno, pid)
-                total = (amount + 1) * int(price)
-                Record.update_product({'amount': amount + 1, 'tno': tno, 'pid': pid, 'total': total})
+                # 如果購物車裡面有的話
+                pass
+                # amount = Record.get_amount(tno, pid)
+                # # date = Record.get_date(pid, tno) # 取得取車與還車時間
+                # # total = (amount + 1) * int(price)
+                # Record.update_product({'amount': amount, 'tno': tno, 'pid': pid})
 
         elif "delete" in request.form:
             pid = request.form.get('delete')
             tno = Cart.get_cart(current_user.id)[1]
-
             Member.delete_product(tno, pid)
             product_data = only_cart()
         #點擊繼續購物
         elif "user_edit" in request.form:
-            change_order()
+            pid = request.form.get('pid')
+            start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
+            end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
+            if start_date and end_date: 
+                change_order()
+            else:
+                pass
             return redirect(url_for('carstore.carstore'))
         #點擊直接結帳
         elif "buy" in request.form:
-            change_order()
+            pid = request.form.get('pid')
+            start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
+            end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
+            if start_date and end_date: 
+                change_order()
+            else:
+                flash("請選擇時間")
+                return redirect(url_for('carstore.cart'))
             return redirect(url_for('carstore.order'))
         #點擊下訂單
         elif "order" in request.form:
@@ -243,7 +260,7 @@ def order():
             '車輛編號': i[1],
             '車輛型號': model,
             '租金': i[3],
-            '天數': i[2]
+            '時數': i[6]
         }
         product_data.append(product)
     
@@ -290,17 +307,33 @@ def change_order():
     tno = data[1] # 使用者有購物車了，購物車的交易編號是什麼
     product_row = Record.get_record(data[1])
 
+
     for i in product_row:
-        
-        # i[0]：交易編號 / i[1]：商品編號 / i[2]：天數 / i[3]：租金
-        if int(request.form[i[1]]) != i[2]:
-            Record.update_product({
-                'amount':request.form[i[1]],
-                'pid':i[1],
-                'tno':tno,
-                'total':int(request.form[i[1]])*int(i[3])
-            })
-            print('change')
+        # i[0]：交易編號 / i[1]：商品編號 / i[2]：每日租金 / i[3]：總價 / i[4]/i[5]:取車/還車時間 / i[6]:天數 
+        # if int(request.form[i[1]]) != i[2]:
+
+        # 將字符串轉換為 datetime 對象
+        startdate = datetime.fromisoformat(request.form.get(f"{i[1]}_start")).strftime('%Y-%m-%dT%H:%M')
+        enddate = datetime.fromisoformat(request.form.get(f"{i[1]}_end")).strftime('%Y-%m-%dT%H:%M')
+        time_difference = datetime.strptime(enddate, '%Y-%m-%dT%H:%M')-datetime.strptime(startdate, '%Y-%m-%dT%H:%M') # 計算時間差異
+        # 計算天數和小時數
+        days = time_difference.days  # 獲取天數
+        hours = time_difference.seconds // 3600  # 獲取剩餘小時數
+        # 判斷時間差的天數，如果未滿一天則視為一天
+        # if time_difference.days == 0 and time_difference.seconds < 86400:
+        #     amount = 1  # 如果未滿一天，設為1天
+        # else:
+        #     amount = time_difference.days + (time_difference.seconds / 86400)  # 計算完整天數
+
+        Record.update_product({
+            'startdate':startdate,
+            'enddate':enddate,
+            'amount':hours,
+            'pid':i[1],
+            'tno':tno,
+            'total':hours*int(i[2]) # 租的時數*每小時租金
+        })
+        print('change')
 
     return 0
 
@@ -319,14 +352,18 @@ def only_cart():
     for i in product_row:
         pid = i[1]
         model = Product.get_name(i[1])
-        price = i[3]
-        amount = i[2]
+        price = i[2]
+        amount = i[6]
+        startdate = i[4]
+        enddate = i[5]
 
         product = {
             '車輛編號': pid,
             '車輛型號': model,
             '租金': price,
-            '天數': amount
+            '天數': amount,
+            '取車時間':startdate,
+            '還車時間':enddate
         }
         product_data.append(product)
 

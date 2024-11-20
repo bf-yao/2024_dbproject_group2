@@ -25,7 +25,7 @@
       <tr>
         <th><center>車輛編號</center></th>
         <th><center>車輛型號</center></th>
-        <th><center>租金</center></th>
+        <th><center>車輛租金/日</center></th>
         <th><center>取車時間</center></th>
         <th><center>還車時間</center></th>
         <th><center>租用操作</center></th>
@@ -39,14 +39,14 @@
           <center>
             <!-- 開始日期與時間選擇器 -->
             <input class="form-control" type="datetime-local" id="{{ car.車輛編號 }}_start" name="{{ car.車輛編號 }}_start"
-                   min="{{ today_date }}" onchange="validateDate('{{ car.車輛編號 }}')">
+                   min="{{ today_date }}"  value="{{ car.取車時間 }}" onchange="validateDate('{{ car.車輛編號 }}')">
           </center>
         </td>
         <td width="20%">
           <center>
             <!-- 結束日期與時間選擇器 -->
             <input class="form-control" type="datetime-local" id="{{ car.車輛編號 }}_end" name="{{ car.車輛編號 }}_end"
-                   min="{{ today_date }}" onchange="validateDate('{{ car.車輛編號 }}')">
+                   min="{{ today_date }}" value="{{ car.還車時間 }}" onchange="validateDate('{{ car.車輛編號 }}') ">
           </center>
         </td>
         <td>
@@ -66,6 +66,13 @@
       </div>
     </center>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+                {% for category, message in messages %}
+                    <span style="color: red;">{{ message }}</span>
+                {% endfor %}
+        {% endif %}
+    {% endwith %}
 
   </form>
 

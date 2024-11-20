@@ -112,7 +112,7 @@ class Member:
 
     @staticmethod
     def get_order(userid):
-        sql = 'SELECT * FROM order_list WHERE mid = %s ORDER BY startdate DESC'
+        sql = 'SELECT * FROM order_list WHERE mid = %s ORDER BY ordertime DESC'
         return DB.fetchall(sql, (userid,))
 
     @staticmethod
@@ -200,8 +200,8 @@ class Record:
 
     @staticmethod
     def add_product(input_data):
-        sql = 'INSERT INTO record (pid, tno, amount, saleprice, total) VALUES (%s, %s, 1, %s, %s)'
-        DB.execute_input(sql, (input_data['pid'], input_data['tno'], input_data['saleprice'], input_data['total']))
+        sql = 'INSERT INTO record (pid, tno, amount, saleprice, total, startdate, enddate) VALUES (%s, %s, 0, %s, %s, %s, %s)'
+        DB.execute_input(sql, (input_data['pid'], input_data['tno'], input_data['saleprice'], input_data['total'], input_data['startdate'], input_data['enddate']))
 
     @staticmethod
     def get_record(tno):
@@ -215,8 +215,8 @@ class Record:
 
     @staticmethod
     def update_product(input_data):
-        sql = 'UPDATE record SET amount = %s, total = %s WHERE pid = %s and tno = %s'
-        DB.execute_input(sql, (input_data['amount'], input_data['total'], input_data['pid'], input_data['tno']))
+        sql = 'UPDATE record SET amount = %s, total = %s, startdate=%s, enddate=%s WHERE pid = %s and tno = %s'
+        DB.execute_input(sql, (input_data['amount'], input_data['total'], input_data['startdate'], input_data['enddate'], input_data['pid'], input_data['tno']))
 
     @staticmethod
     def delete_check(pid):
