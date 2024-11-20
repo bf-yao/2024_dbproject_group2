@@ -133,6 +133,10 @@ class Cart:
     def get_cart(user_id):
         sql = 'SELECT * FROM cart WHERE mid = %s'
         return DB.fetchone(sql, (user_id,))
+    @staticmethod
+    def get_pid(tno):
+        sql = 'SELECT pid FROM record WHERE tno = %s'
+        return DB.fetchone(sql, (tno,))
 
     @staticmethod
     def add_cart(user_id, time):

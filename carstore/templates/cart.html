@@ -20,6 +20,7 @@
 <br/>
 <div class="container-xl">
   <br/>
+  <h2 class="mb-4 text-center">選擇取車/還車時間</h2>
   <form method="post" action={{ url_for('carstore.cart') }}>
     <table class="table table-bordered">
       <tr>
@@ -60,14 +61,12 @@
       {% endfor %}  
     </table>
 
-    {% for car in data %}
     <center>
       <div class="option">
-        <button class="btn btn-primary" type="submit" value="{{car.車輛編號}}" name="user_edit" >繼續選車</button>
-        <button class="btn btn-success" type="submit" value="{{car.車輛編號}}" name="buy" >直接結帳</button>
+        <button class="btn btn-primary" type="submit" name="user_edit" >繼續選車</button>
+        <button class="btn btn-success" type="submit" name="buy" >下一步</button>
       </div>  
-    </center>
-    {% endfor %}
+    </center> 
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

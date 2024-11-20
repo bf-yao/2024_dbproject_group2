@@ -194,21 +194,32 @@ def cart():
                 end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
                 Record.add_product({'pid': pid, 'tno': tno, 'saleprice': price, 'total': price, 'startdate':start_date, 'enddate':end_date})
             else:
-                # 如果購物車裡面有的話
+                # 若購物車內已經有商品
                 pass
-                # amount = Record.get_amount(tno, pid)
-                # # date = Record.get_date(pid, tno) # 取得取車與還車時間
-                # # total = (amount + 1) * int(price)
-                # Record.update_product({'amount': amount, 'tno': tno, 'pid': pid})
+                # existing_order = Record.get_record(tno)  # 假設這個方法可以取得購物車內現有訂單
+                # existing_pid = existing_order[0][0] # pid
+                # print(existing_order[0][0])
+
+                # # 提示用戶是否覆蓋現有訂單
+                # confirm_override = input(f"購物車內已有訂單 (車輛編號: {existing_pid})，是否覆蓋原訂單？(y/n): ").strip().lower()
+
+                # if confirm_override == 'y':  # 用戶選擇覆蓋
+                #     start_date = request.form.get(f"{pid}_start")
+                #     end_date = request.form.get(f"{pid}_end")
+                #     Record.update_product({'pid': pid, 'tno': tno, 'amount': 0, 'total': price, 'startdate': start_date, 'enddate': end_date})
+                #     print("已覆蓋原有訂單。")
+                # else:  # 用戶選擇不覆蓋
+                #     pass
 
         elif "delete" in request.form:
             pid = request.form.get('delete')
             tno = Cart.get_cart(current_user.id)[1]
             Member.delete_product(tno, pid)
             product_data = only_cart()
-        #點擊繼續購物
+        #點擊繼續選車
         elif "user_edit" in request.form:
-            pid = request.form.get('user_edit')
+            tno = Cart.get_cart(current_user.id)[1]
+            pid = Cart.get_pid(str(tno))
             start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
             end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
             if start_date and end_date: 
@@ -216,19 +227,23 @@ def cart():
             else:
                 pass
             return redirect(url_for('carstore.carstore'))
-        #點擊直接結帳
+        #點擊下一步(到確認駕駛資訊)
         elif "buy" in request.form:
-            pid = request.form.get('buy')
-            start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
-            end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
+            tno = Cart.get_cart(current_user.id)[1]
+            pid = Cart.get_pid(str(tno))
+            start_date = request.form.get(f"{pid[0]}_start") # 從form裡面拿取車時間
+            end_date = request.form.get(f"{pid[0]}_end") # 從form裡面拿還車時間
 
             if start_date and end_date: 
                 change_order()
             else:
                 flash("請選擇時間")
                 return redirect(url_for('carstore.cart'))   
-            return redirect(url_for('carstore.order'))
-        #點擊下訂單
+            return redirect(url_for('carstore.license'))    
+        
+        elif "undo" in request.form:
+            return redirect(url_for('carstore.license'))  
+
         elif "order" in request.form:
             tno = Cart.get_cart(current_user.id)[1]
             total = Record.get_total_money(tno)
@@ -248,7 +263,7 @@ def cart():
 
 #點擊直接結帳後將購物車內商品送入order頁面
 @store.route('/order')
-def order():
+def order():    
     data = Cart.get_cart(current_user.id)
     tno = data[1]
 
@@ -365,6 +380,53 @@ def only_cart():
 
     return product_data
 
+# 確認駕駛資訊
+@store.route('/license', methods=['GET', 'POST'])
+@login_required # 使用者登入後才可以看
+def license():
+    data = Member.get_member(current_user.id)
+
+    # 檢查資料是否存在並取出欄位，沒有資料則設為空字串
+    user_data = {
+        'user_id': data[0][0] if data[0][0] else '',
+        'user_name': data[0][1] if data[0][1] else '',
+        'password': data[0][2] if data[0][2] else '',
+        'identity': data[0][3] if data[0][3] else '',
+        'license_number': data[0][4] if data[0][4] else '',
+        'phone_number': data[0][5] if data[0][5] else '',
+        'address': data[0][6] if data[0][6] else ''
+    }
+    # 點擊去付款
+    if "pay" in request.form:
+        if request.method == 'POST':  # 如果是 POST 請求
+            input_data = {
+                'user_id' : data[0][0],
+                'user_name' : data[0][1],
+                'license_number' : request.values.get('license_number'),
+                'phone_number' : request.values.get('phone_number'),
+                'address' : request.values.get('address')
+            }
+
+            # 判斷字典中的每個值是否都不為空
+            if all(value for value in input_data.values()):
+                # 如果所有值都不為空，將會員駕照資料存入資料庫
+                try: 
+                    Member.update_member(input_data)
+                except Exception as e:
+                    print(e)
+            else:
+                # 如果有任何值為空，執行錯誤處理或顯示提示
+                flash("資料有缺失，請補充所有欄位。")
+                return redirect(url_for('carstore.license'))
+
+        return redirect(url_for('carstore.order'))
+    
+    elif "undo" in request.form:
+        return redirect(url_for('carstore.cart'))
+
+    return render_template('license.html', user=current_user.name, **user_data)
+
+# 修改會員資訊
 @store.route('/userinfo', methods=['GET', 'POST'])
 def userinfo():
     data = Member.get_member(current_user.id)
@@ -410,4 +472,4 @@ def userinfo():
                 flash("修改失敗，請重試")
             return redirect(url_for('carstore.userinfo')) 
 
-    return render_template('userinfo.html', **user_data)
+    return render_template('userinfo.html', **user_data, user=current_user.name )

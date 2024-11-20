@@ -1,0 +1,51 @@
+{% extends "frontstage.html" %}
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}carstore{% endblock title%}
+
+{% block content%}
+
+<br/>
+<div class="d-flex justify-content-center align-items-center">
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">確認駕駛資訊</h2>
+        <form  method='post' action={{ url_for('carstore.license') }}>
+            <!-- 駕照號碼 -->
+            <div class="mb-3">
+                <label for="licenseNumber" class="form-label">駕照號碼</label>
+                <input type="text" class="form-control" name="license_number" placeholder="請輸入駕照號碼" value="{{ license_number }}">
+            </div>
+
+            <!-- 聯絡電話 -->
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">聯絡電話</label>
+                <input type="tel" class="form-control" name="phone_number" placeholder="請輸入聯絡電話" value="{{ phone_number }}" minlength="10" maxlength="10" >
+            </div>
+            
+            <!-- 地址 -->
+             <div class="mb-3">
+                <label for="address" class="form-label">住家地址</label>
+                <input type="text" class="form-control" name="address" placeholder="請輸入住家地址" value="{{ address }}" >
+            </div>
+
+            <!-- 按鈕區塊 -->
+            <center> 
+              <div class="option">
+                <button class="btn btn-primary" type="submit" name="undo">上一步</button>
+                <button class="btn btn-success" type="submit" name="pay">前往付款</button>
+              </div>
+            </center>
+        </form>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+            {% for category, message in messages %}
+                <span style="color: red;">{{ message }}</span>
+            {% endfor %}
+    {% endif %}
+{% endwith %}
+{% endblock content%}

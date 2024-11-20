@@ -6,8 +6,11 @@
 {% block title %}carstore{% endblock title%}
 
 {% block content%}
+
 <br/>
 <div class="container-xl">
+  <br/>
+  <h2 class="mb-4 text-center">確認訂單資訊</h2>
   <form method="post" action={{ url_for('carstore.cart') }}>
     <table class="table table-bordered">
       <tr>
@@ -49,8 +52,8 @@
     
     <center> 
       <div class="option">
-        <a href="{{ url_for('carstore.cart') }}"><button class="btn btn-primary" type="submit" >回購物車</button></a>
-        <button class="btn btn-success" type="submit" value="order" name="order">下訂單</button>
+        <button class="btn btn-primary" type="submit" name="undo">上一步</button>
+        <button class="btn btn-success" type="submit" value="order" name="order">確認付款</button>
     </div>
     </center>
 
