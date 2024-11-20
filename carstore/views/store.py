@@ -74,7 +74,7 @@ def carstore():
         color = data[5]
         price = data[6]
         status = data[7]
-        image = 'sdg.jpg'
+        image = data[8]+'.png' if data[8] else 'sdg.jpg'
         
         product = {
             '車輛編號': pid,
@@ -167,7 +167,7 @@ def cart():
             flash('No permission')
             return redirect(url_for('manager.home'))
 
-    # 回傳有 pid 代表要 加商品
+    # 回傳有 pid 代表要加商品
     if request.method == 'POST':
         if "pid" in request.form:
             data = Cart.get_cart(current_user.id)
@@ -208,7 +208,7 @@ def cart():
             product_data = only_cart()
         #點擊繼續購物
         elif "user_edit" in request.form:
-            pid = request.form.get('pid')
+            pid = request.form.get('user_edit')
             start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
             end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
             if start_date and end_date: 
@@ -218,14 +218,15 @@ def cart():
             return redirect(url_for('carstore.carstore'))
         #點擊直接結帳
         elif "buy" in request.form:
-            pid = request.form.get('pid')
+            pid = request.form.get('buy')
             start_date = request.form.get(f"{pid}_start") # 從form裡面拿取車時間
             end_date = request.form.get(f"{pid}_end") # 從form裡面拿還車時間
+
             if start_date and end_date: 
                 change_order()
             else:
                 flash("請選擇時間")
-                return redirect(url_for('carstore.cart'))
+                return redirect(url_for('carstore.cart'))   
             return redirect(url_for('carstore.order'))
         #點擊下訂單
         elif "order" in request.form:
@@ -316,15 +317,10 @@ def change_order():
         startdate = datetime.fromisoformat(request.form.get(f"{i[1]}_start")).strftime('%Y-%m-%dT%H:%M')
         enddate = datetime.fromisoformat(request.form.get(f"{i[1]}_end")).strftime('%Y-%m-%dT%H:%M')
         time_difference = datetime.strptime(enddate, '%Y-%m-%dT%H:%M')-datetime.strptime(startdate, '%Y-%m-%dT%H:%M') # 計算時間差異
-        # 計算天數和小時數
-        days = time_difference.days  # 獲取天數
-        hours = time_difference.seconds // 3600  # 獲取剩餘小時數
-        # 判斷時間差的天數，如果未滿一天則視為一天
-        # if time_difference.days == 0 and time_difference.seconds < 86400:
-        #     amount = 1  # 如果未滿一天，設為1天
-        # else:
-        #     amount = time_difference.days + (time_difference.seconds / 86400)  # 計算完整天數
-
+        
+        # 總小時數
+        hours = time_difference.days*24 + time_difference.seconds // 3600
+      
         Record.update_product({
             'startdate':startdate,
             'enddate':enddate,

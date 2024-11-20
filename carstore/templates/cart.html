@@ -25,7 +25,7 @@
       <tr>
         <th><center>車輛編號</center></th>
         <th><center>車輛型號</center></th>
-        <th><center>車輛租金/日</center></th>
+        <th><center>車輛租金/小時</center></th>
         <th><center>取車時間</center></th>
         <th><center>還車時間</center></th>
         <th><center>租用操作</center></th>
@@ -59,12 +59,15 @@
       </tr>
       {% endfor %}  
     </table>
+
+    {% for car in data %}
     <center>
       <div class="option">
-        <button class="btn btn-primary" type="submit" value="edit" name="user_edit" >繼續選車</button>
-        <button class="btn btn-success" type="submit" value="edit" name="buy" >直接結帳</button>
-      </div>
+        <button class="btn btn-primary" type="submit" value="{{car.車輛編號}}" name="user_edit" >繼續選車</button>
+        <button class="btn btn-success" type="submit" value="{{car.車輛編號}}" name="buy" >直接結帳</button>
+      </div>  
     </center>
+    {% endfor %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
