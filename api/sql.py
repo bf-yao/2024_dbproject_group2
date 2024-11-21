@@ -261,16 +261,7 @@ class Order_List:
 
     @staticmethod
     def get_orderdetail():
-<<<<<<< HEAD
-        sql = '''
-        SELECT o.oid, p.model, r.saleprice, r.amount
-        FROM order_list o
-        JOIN record r ON o.tno = r.tno -- 確保兩者都是 bigint 類型
-        JOIN product p ON r.pid = p.pid
-        '''
-=======
         sql = 'SELECT o.oid, p.model, r.saleprice, r.amount, r.startdate, r.enddate FROM order_list o JOIN record r ON o.tno = r.tno JOIN product p ON r.pid = p.pid'
->>>>>>> kenlu
         return DB.fetchall(sql)
 
 
