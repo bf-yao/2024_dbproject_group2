@@ -35,6 +35,8 @@
                             <th><center>車輛型號</center></th>
                             <th><center>車輛價格(小時)</center></th>
                             <th><center>租用時數</center></th>
+                            <th><center>租車時間</center></th>
+                            <th><center>還車時間</center></th>
                         </tr>
                             
                         {% for j in orderDetail %}
@@ -43,6 +45,8 @@
                             <td> <center>{{ j.車輛型號 }}</center></td>
                             <td> <center>{{ j.車輛價格 }}</center></td>
                             <td> <center>{{ j.租用時數 }}</center></td>
+                            <td> <center>{{ j.租車時間 }}</center></td>
+                            <td> <center>{{ j.還車時間 }}</center></td>
                         </tr>
                         {% endif %}
                         {% endfor %}

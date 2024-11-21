@@ -56,4 +56,4 @@ def dashboard():
     for i in row:
         countList.append(i[0])
         
-    return render_template('dashboard.html', counter = counter, revenue = revenue, dataa = dataa, datab = datab, datac = datac, nameList = nameList, countList = countList)
+    return render_template('dashboard.html', counter = counter, revenue = revenue, dataa = dataa, datab = datab, datac = datac, nameList = nameList, countList = countList, user=current_user.name)

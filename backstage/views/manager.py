@@ -190,7 +190,9 @@ def orderManager():
                 '訂單編號': j[0],
                 '車輛型號': j[1],
                 '車輛價格': j[2],
-                '租用時數': j[3]
+                '租用時數': j[3],
+                '租車時間': j[4],
+                '還車時間': j[5]
             }
             order_detail.append(orderdetail)
 
