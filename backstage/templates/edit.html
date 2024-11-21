@@ -15,19 +15,35 @@
   <form method="post" enctype=multipart/form-data action={{ url_for('manager.edit') }}>
     <table class="table table-bordered">
       <tr>
-        <th>商品編號</th>
-        <td><input class="form-control" type="text" value="{{ data.商品編號 }}" name="pid" readonly class="id_input"></td>
+        <th>車輛編號</th>
+        <td><input class="form-control" type="text" value="{{ data.車輛編號 }}" name="pid" readonly class="id_input"></td>
       </tr>
       <tr>
-        <th>商品名稱</th>
-        <td><input class="form-control" type="text" value="{{ data.商品名稱 }}" name="pname" required></td>
+        <th>車輛品牌</th>
+        <td><input class="form-control" type="text" value="{{ data.車輛品牌 }}" name="brand" required></td>
       </tr>
       <tr>
-        <th>單價</th>
-        <td><input class="form-control" type="text" value="{{ data.單價 }}" name="price" required></td>
+        <th>車輛型號</th>
+        <td><input class="form-control" type="text" value="{{ data.車輛型號 }}" name="model" required></td>
       </tr>
       <tr>
-        <th>類別</th>
+        <th>出廠年份</th>
+        <td><input class="form-control" type="number" value="{{ data.出廠年份 }}" name="year" required></td>
+      </tr>
+      <tr>
+        <th>總里程</th>
+        <td><input class="form-control" type="number" value="{{ data.總里程 }}" name="mileage" required></td>
+      </tr>
+      <tr>
+        <th>車輛顏色</th>
+        <td><input class="form-control" type="text" value="{{ data.車輛顏色 }}" name="color" required></td>
+      </tr>
+      <tr>
+        <th>價格(小時)</th>
+        <td><input class="form-control" type="number" value="{{ data.價格 }}" name="price" required></td>
+      </tr>
+      <!-- <tr> -->
+        <!-- <th>類別</th>
         <td>
           <select class="form-control" name="category">
             {% if data.類別 == 'CD' %}
@@ -44,12 +60,12 @@
               <option value="CD">CD</option>
             {% endif %}
             
-        </select>
-      </tr>
+        </select> -->
+      <!-- </tr> -->
       <tr>
         <th>商品敘述</th>
         <td>
-          <textarea class="form-control" name="description">{{ data.商品敘述 }}</textarea>
+          <textarea class="form-control" name="status">{{ data.商品敘述 }}</textarea>
         </td>
       </tr>
       <!-- <tr>
@@ -61,7 +77,7 @@
     </table>
     <center>
       <div class="option">
-        <button class="btn btn-outline-success" type="submit">確定修改</button> 
+        <button class="btn btn-outline-success" type="submit" name="submit" value="true">確定修改</button> 
         <a href="{{ url_for('manager.productManager') }}"><button class="btn btn-outline-danger">回商品管理</button></a>
       </div>
     </center>

@@ -27,7 +27,7 @@ def dashboard():
             for k in row:
                 dataa.append(k[1])
         
-    row = Analysis.category_sale()
+    row = Analysis.brand_sale()
     datab = []
     for i in row:
         temp = {
@@ -56,4 +56,4 @@ def dashboard():
     for i in row:
         countList.append(i[0])
         
-    return render_template('dashboard.html', counter = counter, revenue = revenue, dataa = dataa, datab = datab, datac = datac, nameList = nameList, countList = countList)
+    return render_template('dashboard.html', counter = counter, revenue = revenue, dataa = dataa, datab = datab, datac = datac, nameList = nameList, countList = countList, user=current_user.name)

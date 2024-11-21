@@ -172,7 +172,7 @@ class Product:
 
     @staticmethod
     def get_all_product():
-        sql = 'SELECT * FROM product'
+        sql = 'SELECT * FROM product ORDER BY brand, model'
         return DB.fetchall(sql)
 
     @staticmethod
@@ -182,8 +182,8 @@ class Product:
 
     @staticmethod
     def add_product(input_data):
-        sql = 'INSERT INTO product (pid, pname, price, category, pdesc) VALUES (%s, %s, %s, %s, %s)'
-        DB.execute_input(sql, (input_data['pid'], input_data['pname'], input_data['price'], input_data['category'], input_data['pdesc']))
+        sql = 'INSERT INTO product (pid, brand, model, year, mileage, color, price, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+        DB.execute_input(sql, (input_data['pid'], input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status']))
 
     @staticmethod
     def delete_product(pid):
@@ -192,8 +192,8 @@ class Product:
 
     @staticmethod
     def update_product(input_data):
-        sql = 'UPDATE product SET pname = %s, price = %s, category = %s, pdesc = %s WHERE pid = %s'
-        DB.execute_input(sql, (input_data['pname'], input_data['price'], input_data['category'], input_data['pdesc'], input_data['pid']))
+        sql = 'UPDATE product SET brand = %s, model = %s, year = %s, mileage = %s, color = %s, price = %s, status = %s WHERE pid = %s'
+        DB.execute_input(sql, (input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status'], input_data['pid']))
 
 
 class Record:
@@ -256,22 +256,21 @@ class Order_List:
 
     @staticmethod
     def get_order():
-        sql = '''
-            SELECT o.oid, m.name, o.price, o.ordertime
-            FROM order_list o
-            NATURAL JOIN member m
-            ORDER BY o.ordertime DESC
-        '''
+        sql = 'SELECT o.oid, m.name, o.price, o.ordertime FROM order_list o JOIN member m ON o.mid = m.user_id ORDER BY o.ordertime DESC'
         return DB.fetchall(sql)
 
     @staticmethod
     def get_orderdetail():
+<<<<<<< HEAD
         sql = '''
         SELECT o.oid, p.model, r.saleprice, r.amount
         FROM order_list o
         JOIN record r ON o.tno = r.tno -- 確保兩者都是 bigint 類型
         JOIN product p ON r.pid = p.pid
         '''
+=======
+        sql = 'SELECT o.oid, p.model, r.saleprice, r.amount, r.startdate, r.enddate FROM order_list o JOIN record r ON o.tno = r.tno JOIN product p ON r.pid = p.pid'
+>>>>>>> kenlu
         return DB.fetchall(sql)
 
 
@@ -287,16 +286,16 @@ class Analysis:
         return DB.fetchall(sql, (i,))
 
     @staticmethod
-    def category_sale():
-        sql = 'SELECT SUM(total), category FROM product, record WHERE product.pid = record.pid GROUP BY category'
+    def brand_sale():
+        sql = 'SELECT SUM(total), brand FROM product, record WHERE product.pid = record.pid GROUP BY brand'
         return DB.fetchall(sql)
 
     @staticmethod
     def member_sale():
-        sql = 'SELECT SUM(price), member.mid, member.name FROM order_list, member WHERE order_list.mid = member.mid AND member.identity = %s GROUP BY member.mid, member.name ORDER BY SUM(price) DESC'
+        sql = 'SELECT SUM(price), member.user_id, member.name FROM order_list, member WHERE order_list.mid = member.user_id AND member.identity = %s GROUP BY member.user_id, member.name ORDER BY SUM(price) DESC'
         return DB.fetchall(sql, ('user',))
 
     @staticmethod
     def member_sale_count():
-        sql = 'SELECT COUNT(*), member.mid, member.name FROM order_list, member WHERE order_list.mid = member.mid AND member.identity = %s GROUP BY member.mid, member.name ORDER BY COUNT(*) DESC'
+        sql = 'SELECT COUNT(*), member.user_id, member.name FROM order_list, member WHERE order_list.mid = member.user_id AND member.identity = %s GROUP BY member.user_id, member.name ORDER BY COUNT(*) DESC'
         return DB.fetchall(sql, ('user',))
