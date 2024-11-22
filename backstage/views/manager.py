@@ -3,11 +3,16 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from link import *
 from api.sql import *
 import imp, random, os, string
+import psycopg2
 from werkzeug.utils import secure_filename
 from flask import current_app
+from io import BytesIO
 
 UPLOAD_FOLDER = 'static/product'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'pjp', 'pjpeg', 'jfif'])
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 manager = Blueprint('manager', __name__, template_folder='../templates')
 
@@ -57,7 +62,7 @@ def car():
             '出廠年份': i[3],
             '總里程': i[4],
             '車輛顏色': i[5],
-            '價格': i[6]
+            '價格': i[6],
         }
         car_data.append(car)
     return car_data
@@ -73,7 +78,7 @@ def add():
                 en = random.choice(string.ascii_letters) + random.choice(string.ascii_letters) + random.choice(string.ascii_letters)
                 pid = en.upper() + '-' + number
                 data = Product.get_product(pid)
-
+            
             brand = request.values.get('brand')
             model = request.values.get('model')
             year = request.values.get('year')
@@ -81,6 +86,12 @@ def add():
             color = request.values.get('color')
             price = request.values.get('price')
             status = request.values.get('status')
+            file = request.files.get('file')
+            image_data = None
+
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                image_data = file.read()
 
             # 檢查是否正確獲取到所有欄位的數據
             if brand is None or price is None or model is None or year is None or mileage is None or color is None or status is None:
@@ -104,7 +115,8 @@ def add():
                 'mileage' : mileage,
                 'color' : color,
                 'price' : price,
-                'status':status
+                'status': status,
+                'image': image_data
                 }
             )
             return redirect(url_for('manager.productManager'))
@@ -121,6 +133,16 @@ def edit():
 
     if request.method == 'POST':
         if(request.values.get('submit')=='true'):
+            file = request.files.get('file')
+            pid = request.values.get('pid')
+            image_data = None
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # 如果有上傳圖片，將其保存並轉換為二進制數據
+                image_data = file.read()
+            else:
+                image_data = Product.get_image(pid)
+            
             Product.update_product(
                 {
                 'brand' : request.values.get('brand'),
@@ -130,7 +152,8 @@ def edit():
                 'color' : request.values.get('color'),
                 'price' : request.values.get('price'),
                 'status' : request.values.get('status'),
-                'pid' : request.values.get('pid')
+                'pid' : pid,
+                'image': image_data
                 }
             )       
         
@@ -151,6 +174,7 @@ def show_info():
     color = data[5]
     price = data[6]
     status = data[7]
+    image = data[8]
 
     product = {
         '車輛編號': pid,
@@ -160,7 +184,7 @@ def show_info():
         '總里程': mileage,
         '車輛顏色': color,
         '價格': price,
-        '商品敘述': status
+        '車輛敘述': status
     }
     return product
 

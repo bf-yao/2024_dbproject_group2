@@ -10,7 +10,7 @@ import random, string
 from sqlalchemy import null
 from link import *
 import math
-from base64 import b64encode
+import base64
 from api.sql import Member, Order_List, Product, Record, Cart
 from datetime import datetime
 
@@ -74,7 +74,7 @@ def carstore():
         color = data[5]
         price = data[6]
         status = data[7]
-        image = data[8]+'.png' if data[8] else 'sdg.jpg'
+        image = base64.b64encode(data[8]).decode('utf-8')  # 將二進制數據轉為 Base64 字串
         
         product = {
             '車輛編號': pid,
@@ -85,7 +85,7 @@ def carstore():
             '顏色': color,
             '租金': price,
             '車輛狀態': status,
-            '商品圖片': image
+            '車輛圖片': f"data:image/jpeg;base64,{image}"
         }
 
         return render_template('product.html', data = product, user=current_user.name)
@@ -227,8 +227,12 @@ def cart():
             start_date = request.form.get(f"{pid[0]}_start") # 從form裡面拿取車時間
             end_date = request.form.get(f"{pid[0]}_end") # 從form裡面拿還車時間
 
-            if start_date and end_date: 
-                change_order()
+            if start_date and end_date:
+                if(Record.reserve_recheck(tno,pid,start_date,end_date)):
+                    flash("該時段已有人預訂!")
+                    return redirect(url_for('carstore.cart'))
+                else:
+                    change_order()                
             else:
                 flash("請選擇時間")
                 return redirect(url_for('carstore.cart'))   
@@ -304,7 +308,9 @@ def orderlist():
             '訂單編號': j[0],
             '車輛型態': j[1],
             '租金': j[2],
-            '天數': j[3]
+            '天數': j[3],
+            '取車時間': j[4],
+            '還車時間': j[5]
         }
         orderdetail.append(temp)
 
@@ -369,8 +375,9 @@ def only_cart():
             '取車時間':startdate,
             '還車時間':enddate
         }
-        product_data.append(product)
 
+        product_data.append(product)
+            
     return product_data
 
 # 確認駕駛資訊
@@ -430,7 +437,7 @@ def license():
     
     elif "undo" in request.form:
         return redirect(url_for('carstore.cart'))
-
+           
     return render_template('license.html', user=current_user.name, **user_data)
 
 # 修改會員資訊

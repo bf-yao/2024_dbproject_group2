@@ -182,8 +182,8 @@ class Product:
 
     @staticmethod
     def add_product(input_data):
-        sql = 'INSERT INTO product (pid, brand, model, year, mileage, color, price, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-        DB.execute_input(sql, (input_data['pid'], input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status']))
+        sql = 'INSERT INTO product (pid, brand, model, year, mileage, color, price, status, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        DB.execute_input(sql, (input_data['pid'], input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status'], input_data['image']))
 
     @staticmethod
     def delete_product(pid):
@@ -192,9 +192,13 @@ class Product:
 
     @staticmethod
     def update_product(input_data):
-        sql = 'UPDATE product SET brand = %s, model = %s, year = %s, mileage = %s, color = %s, price = %s, status = %s WHERE pid = %s'
-        DB.execute_input(sql, (input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status'], input_data['pid']))
+        sql = 'UPDATE product SET brand = %s, model = %s, year = %s, mileage = %s, color = %s, price = %s, status = %s, image = %s WHERE pid = %s'
+        DB.execute_input(sql, (input_data['brand'], input_data['model'], input_data['year'], input_data['mileage'], input_data['color'], input_data['price'], input_data['status'], input_data['image'], input_data['pid']))
 
+    @staticmethod
+    def get_image(pid):
+        sql = 'SELECT image FROM product WHERE pid = %s'
+        return DB.fetchone(sql, (pid,))
 
 class Record:
     @staticmethod
@@ -236,6 +240,11 @@ class Record:
     def delete_product(tno):
         sql = "DELETE FROM record WHERE tno = %s"
         DB.execute_input(sql, (tno,))
+
+    @staticmethod   
+    def reserve_recheck(tno, pid, startdate, enddate):
+        sql = 'SELECT * FROM record , order_list WHERE record.tno != %s and record.tno = order_list.tno and pid = %s and ((startdate < %s and enddate > %s) or startdate = %s or enddate = %s or (startdate < %s and enddate > %s) or startdate = %s or enddate = %s or (startdate > %s and enddate < %s))'
+        return DB.fetchall(sql, (tno,pid,startdate,startdate,startdate,startdate,enddate,enddate,enddate,enddate,startdate,enddate,))
 
     @staticmethod
     def delete_check(pid):

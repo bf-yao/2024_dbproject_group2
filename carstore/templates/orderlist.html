@@ -19,9 +19,11 @@
                   <div class="mb-3">
                     <table class="table table-bordered">
                       <tr>
-                        <th><center>車輛名稱</center></th>
-                        <th><center>車輛租金/小時</center></th>
-                        <th><center>預訂時數</center></th>
+                        <th width="10%"><center>車型</center></th>
+                        <th width="30%"><center>車輛租金/小時</center></th>
+                        <th width="20%"><center>預訂時數</center></th>
+                        <th width="20%"><center>取車時間</center></th>
+                        <th width="20%"><center>還車時間</center></th>
                       </tr>
                       
                       {% for j in detail %}
@@ -30,6 +32,8 @@
                         <td> <center>{{ j.車輛型態 }}</center></td>
                         <td> <center>{{ j.租金 }}</center></td>
                         <td> <center>{{ j.天數 }}</center></td>
+                        <td> <center>{{ j.取車時間 }}</center></td>
+                        <td> <center>{{ j.還車時間 }}</center></td>
                       </tr>
                       {% endif %}
                       {% endfor %}

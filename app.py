@@ -1,4 +1,5 @@
 import re, os, random, string
+import psycopg2
 from typing_extensions import Self
 from flask import Flask, request, template_rendered, Blueprint, url_for, redirect, flash, render_template
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -12,6 +13,7 @@ from backstage.views.analysis import *
 from backstage.views.manager import *
 from link import *
 from werkzeug.utils import secure_filename
+from io import BytesIO
 
 ## Flask-Login : 確保未登入者不能使用系統
 app = Flask(__name__)

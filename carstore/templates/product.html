@@ -7,12 +7,11 @@
 
 {% block content %}
 
-{% set temp = 'img/' + data.商品圖片 %}
 
 <br/>
 <div class="row">
 <div class="card" style="width: 20rem;margin-left:5%">
-  <img src={{ url_for('static', filename = temp  ) }} class="card-img-top">
+  <img src="{{ data.車輛圖片 }}" class="card-img-top" alt="車輛圖片">
   <div class="card-body">
     <h5 class="card-title">{{ data.車輛型號 }}</h5>
     <p class="card-text"></p>
