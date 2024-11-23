@@ -287,7 +287,7 @@ class Analysis:
 
     @staticmethod
     def brand_sale():
-        sql = 'SELECT SUM(total), brand FROM product, record WHERE product.pid = record.pid GROUP BY brand'
+        sql = 'SELECT SUM(total), brand FROM product, record, order_list WHERE product.pid = record.pid and record.tno = order_list.tno GROUP BY brand'
         return DB.fetchall(sql)
 
     @staticmethod
